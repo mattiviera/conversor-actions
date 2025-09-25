@@ -1,0 +1,26 @@
+# Entornos virtuales
+venv/
+.env/
+*.pyc
+__pycache__/
+
+# Pytest
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# Carpeta de distribución
+dist/
+build/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
