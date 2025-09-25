@@ -5,6 +5,7 @@ from app.conversor import (
     km_a_millas,
     millas_a_km,
 )
+from datetime import datetime, timezone
 
 
 app = FastAPI()
@@ -33,3 +34,15 @@ def api_km_to_miles(km: float):
 @app.get("/miles-to-km/{miles}")
 def api_miles_to_km(miles: float):
     return {"km": millas_a_km(miles)}
+
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """
+    Endpoint para verificar si el servicio está levantado.
+    Responde con status 200 y timestamp UTC.
+    """
+    return {
+        "status": "ok",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
