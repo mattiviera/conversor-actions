@@ -35,6 +35,8 @@ jobs:
           pip install pytest pytest-cov
       - name: Run tests with coverage
         run: pytest --cov=app --cov-report=xml --cov-report=term
+        env:
+          MY_API_KEY: ${{ secrets.MY_API_KEY }} # <-- Secret agregado aquí
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:

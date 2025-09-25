@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from app.conversor import (
     celsius_a_fahrenheit,
@@ -6,9 +7,16 @@ from app.conversor import (
     millas_a_km,
 )
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 app = FastAPI()
+
+
+API_KEY = os.environ.get("MY_API_KEY")
 
 
 @app.get("/")
@@ -44,5 +52,6 @@ async def health_check():
     """
     return {
         "status": "ok",
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "api_key_configurada": API_KEY is not None
     }

@@ -2,5 +2,6 @@ fastapi
 uvicorn
 pytest
 pytest-cov
+python-dotenv
 httpx
 build
