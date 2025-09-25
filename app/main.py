@@ -1,5 +1,11 @@
 from fastapi import FastAPI
-from app.conversor import celsius_a_fahrenheit, fahrenheit_a_celsius, km_a_millas, millas_a_km
+from app.conversor import (
+    celsius_a_fahrenheit,
+    fahrenheit_a_celsius,
+    km_a_millas,
+    millas_a_km,
+)
+
 
 app = FastAPI()
 
