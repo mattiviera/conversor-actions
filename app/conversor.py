@@ -1,21 +1,14 @@
-def celsius_a_fahrenheit(celsius):
+def celsius_a_fahrenheit(celsius: float) -> float:
     return celsius * 9 / 5 + 32
 
 
-def fahrenheit_a_celsius(fahrenheit):
+def fahrenheit_a_celsius(fahrenheit: float) -> float:
     return (fahrenheit - 32) * 5 / 9
 
 
-def km_a_millas(km):
+def km_a_millas(km: float) -> float:
     return km * 0.621371
 
 
-def millas_a_km(millas):
+def millas_a_km(millas: float) -> float:
     return millas / 0.621371
-
-
-if __name__ == "__main__":
-    print("25°C a Fahrenheit:", celsius_a_fahrenheit(25))
-    print("77°F a Celsius:", fahrenheit_a_celsius(77))
-    print("10 km a millas:", km_a_millas(10))
-    print("6.2 millas a km:", millas_a_km(6.2))
