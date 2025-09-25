@@ -24,3 +24,7 @@ build/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Coverage files
+.coverage
+htmlcov/
