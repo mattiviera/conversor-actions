@@ -20,6 +20,8 @@ Un **conversor de unidades** moderno y eficiente para temperatura y distancia, d
 
 - **`/health`** : Monitoreo del estado del servicio
 - Retorna `{"status": "ok", "timestamp": "2025-01-01T12:00:00Z"}`
+- Incluye `"api_key_configurada": true` si la variable de entorno `MY_API_KEY` está configurada.
+- Permite que pipelines y herramientas de monitoreo verifiquen si el servicio está levantado y la API key está disponible.
 - Timestamp en formato ISO UTC
 - Ideal para pipelines y herramientas de monitoreo
 
