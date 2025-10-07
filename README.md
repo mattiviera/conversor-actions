@@ -44,7 +44,7 @@ Un **conversor de unidades** moderno y eficiente para temperatura y distancia, d
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <URL_DEL_REPO>
+git clone https://github.com/mattiviera/conversor-actions.git
 cd conversor-actions
 ```
 
