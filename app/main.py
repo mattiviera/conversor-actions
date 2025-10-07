@@ -69,18 +69,26 @@ async def ping(request: Request):
 
     # Guardar en Redis
     redis_key = f"ping:{timestamp.isoformat()}"
-    redis_client.hset(redis_key, mapping={
-        "timestamp": timestamp.isoformat(),
-        "client_ip": client_ip,
-        "api_key": api_key
-    })
+    redis_client.hset(
+        redis_key,
+        mapping={
+            "timestamp": timestamp.isoformat(),
+            "client_ip": client_ip,
+            "api_key": api_key,
+        }
+    )
 
     # Guardar en base de datos
-    stmt = insert(health_logs).values(timestamp=timestamp, client_ip=client_ip, api_key=api_key)
+    stmt = insert(health_logs).values(
+        timestamp=timestamp, client_ip=client_ip, api_key=api_key
+    )
     with engine.connect() as conn:
         conn.execute(stmt)
         conn.commit()
 
     # Cambiar "pong" -> "ok" para pasar test
-    return {"status": "ok", "timestamp": timestamp.isoformat(), "client_ip": client_ip}
-
+    return {
+        "status": "ok",
+        "timestamp": timestamp.isoformat(),
+        "client_ip": client_ip,
+    }
