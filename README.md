@@ -46,6 +46,29 @@ Este proyecto incluye un endpoint especial para monitoreo llamado `/ping`. Su pr
 ```
 
 
+### `[GET] /get-responses`
+
+Devuelve todos los registros guardados por los requests realizados al endpoint `/ping`.
+
+**Respuesta ejemplo:**
+
+<pre class="overflow-visible!" data-start="917" data-end="1230"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-json"><span><span>{</span><span>
+  </span><span>"total"</span><span>:</span><span></span><span>3</span><span>,</span><span>
+  </span><span>"records"</span><span>:</span><span></span><span>[</span><span>
+    </span><span>{</span><span>
+      </span><span>"timestamp"</span><span>:</span><span></span><span>"2025-10-07T17:01:00.123456+00:00"</span><span>,</span><span>
+      </span><span>"client_ip"</span><span>:</span><span></span><span>"127.0.0.1"</span><span>,</span><span>
+      </span><span>"api_key"</span><span>:</span><span></span><span>"my-secret-key"</span><span>
+    </span><span>}</span><span>,</span><span>
+    </span><span>{</span><span>
+      </span><span>"timestamp"</span><span>:</span><span></span><span>"2025-10-07T17:05:00.654321+00:00"</span><span>,</span><span>
+      </span><span>"client_ip"</span><span>:</span><span></span><span>"127.0.0.1"</span><span>,</span><span>
+      </span><span>"api_key"</span><span>:</span><span></span><span>"my-secret-key"</span><span>
+    </span><span>}</span><span>
+  </span><span>]</span><span>
+</span><span>}</span></span></code></div></div></pre>
+
+
 ### Pipeline CI/CD
 
 - ✅ **Linting** : Análisis de código con `flake8`
