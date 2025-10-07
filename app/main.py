@@ -9,13 +9,12 @@ from app.conversor import (
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 import redis
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from app.database import engine, health_logs
 
 load_dotenv()
 
 app = FastAPI()
-
 API_KEY = os.environ.get("MY_API_KEY")
 
 # Configuración Redis
@@ -63,6 +62,9 @@ async def health_check():
 
 @app.get("/ping", tags=["Health"])
 async def ping(request: Request):
+    """
+    Endpoint que guarda en Redis y en la base de datos info de quien hizo el request.
+    """
     timestamp = datetime.now(timezone.utc)
     client_ip = request.client.host
     api_key = API_KEY if API_KEY else "no-key"
@@ -75,7 +77,7 @@ async def ping(request: Request):
             "timestamp": timestamp.isoformat(),
             "client_ip": client_ip,
             "api_key": api_key,
-        }
+        },
     )
 
     # Guardar en base de datos
@@ -86,9 +88,28 @@ async def ping(request: Request):
         conn.execute(stmt)
         conn.commit()
 
-    # Cambiar "pong" -> "ok" para pasar test
-    return {
-        "status": "ok",
-        "timestamp": timestamp.isoformat(),
-        "client_ip": client_ip,
-    }
+    return {"status": "ok", "timestamp": timestamp.isoformat(), "client_ip": client_ip}
+
+
+@app.get("/get-responses", tags=["Health"])
+async def get_responses():
+    """
+    Devuelve todos los registros guardados en la base de datos
+    de los requests hechos al endpoint /ping
+    """
+    stmt = select(health_logs)
+    with engine.connect() as conn:
+        results = conn.execute(stmt).fetchall()
+
+    data = [
+        {
+            "timestamp": row.timestamp.isoformat()
+            if isinstance(row.timestamp, datetime)
+            else str(row.timestamp),
+            "client_ip": row.client_ip,
+            "api_key": row.api_key,
+        }
+        for row in results
+    ]
+
+    return {"total": len(data), "records": data}
