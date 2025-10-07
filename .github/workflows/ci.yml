@@ -22,6 +22,12 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      MY_API_KEY: ${{ secrets.MY_API_KEY }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: ${{ vars.DB_HOST }}
+      APP_NAME: ${{ vars.APP_NAME }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -35,8 +41,6 @@ jobs:
           pip install pytest pytest-cov
       - name: Run tests with coverage
         run: pytest --cov=app --cov-report=xml --cov-report=term
-        env:
-          MY_API_KEY: ${{ secrets.MY_API_KEY }} # <-- Secret agregado aquí
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
@@ -45,6 +49,12 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      MY_API_KEY: ${{ secrets.MY_API_KEY }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: ${{ vars.DB_HOST }}
+      APP_NAME: ${{ vars.APP_NAME }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
