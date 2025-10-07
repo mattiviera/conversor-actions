@@ -32,3 +32,8 @@ htmlcov/
 
 .env
 
+# Base de datos SQLite
+*.db
+*.sqlite3
+
+
