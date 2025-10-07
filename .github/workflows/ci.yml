@@ -22,12 +22,15 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    services:
+      redis: # <-- Redis corre como servicio en CI
+        image: redis:7
+        ports:
+          - 6379:6379
     env:
       MY_API_KEY: ${{ secrets.MY_API_KEY }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST: ${{ vars.DB_HOST }}
-      APP_NAME: ${{ vars.APP_NAME }}
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python

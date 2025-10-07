@@ -5,3 +5,6 @@ pytest-cov
 python-dotenv
 httpx
 build
+redis
+SQLAlchemy
+databases
