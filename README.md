@@ -25,6 +25,27 @@ Un **conversor de unidades** moderno y eficiente para temperatura y distancia, d
 - Timestamp en formato ISO UTC
 - Ideal para pipelines y herramientas de monitoreo
 
+
+## Endpoint de Monitoreo y Logs
+
+Este proyecto incluye un endpoint especial para monitoreo llamado `/ping`. Su propósito es registrar información relevante de los requests y permitir verificar que la aplicación está levantada correctamente.
+
+### `/ping`
+
+- **Método:** `GET`
+- **Ruta:** `/ping`
+- **Descripción:**Este endpoint guarda en **Redis** y en la **base de datos** información de quién realiza la petición, incluyendo la dirección IP del cliente, timestamp UTC y si la API Key está configurada.Esto permite auditar accesos y monitorear el estado del servicio.
+- **Respuesta ejemplo:**
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-10-07T15:00:00Z",
+  "client_ip": "127.0.0.1"
+}
+```
+
+
 ### Pipeline CI/CD
 
 - ✅ **Linting** : Análisis de código con `flake8`
@@ -32,6 +53,29 @@ Un **conversor de unidades** moderno y eficiente para temperatura y distancia, d
 - ✅ **Cobertura** : Reportes de cobertura de código (>90%)
 - ✅ **Build** : Construcción automática del paquete
 - ✅ **Artefactos** : Subida automática de builds
+
+
+## Uso con Docker
+
+1. Construir contenedores:
+
+<pre class="overflow-visible!" data-start="1645" data-end="1677"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose build
+</span></span></code></div></div></pre>
+
+2. Levantar contenedores (FastAPI + Redis):
+
+<pre class="overflow-visible!" data-start="1724" data-end="1753"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose up
+</span></span></code></div></div></pre>
+
+3. Acceder a la API:
+
+* Health: [http://localhost:8000/health](http://localhost:8000/health)
+* Ping: [http://localhost:8000/ping](http://localhost:8000/ping)
+
+4. Detener contenedores:
+
+<pre class="overflow-visible!" data-start="1942" data-end="1973"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose down</span></span></code></div></div></pre>
+
 
 ## 📋 Requisitos Previos
 
@@ -150,13 +194,13 @@ Una vez levantado el servidor, accede a la documentación automática:
 
 ### Endpoints Disponibles
 
-| Método | Endpoint                         | Descripción                    |
-| ------ | -------------------------------- | ------------------------------ |
-| GET    | `/health`                        | Estado del servicio            |
-| GET    | `/celsius-to-fahrenheit/{value}` | Convierte Celsius a Fahrenheit |
-| GET    | `/fahrenheit-to-celsius/{value}` | Convierte Fahrenheit a Celsius |
-| GET    | `/km-to-miles/{value}`           | Convierte Kilómetros a Millas  |
-| GET    | `/miles-to-km/{value}`           | Convierte Millas a Kilómetros  |
+| Método | Endpoint                           | Descripción                   |
+| ------- | ---------------------------------- | ------------------------------ |
+| GET     | `/health`                        | Estado del servicio            |
+| GET     | `/celsius-to-fahrenheit/{value}` | Convierte Celsius a Fahrenheit |
+| GET     | `/fahrenheit-to-celsius/{value}` | Convierte Fahrenheit a Celsius |
+| GET     | `/km-to-miles/{value}`           | Convierte Kilómetros a Millas |
+| GET     | `/miles-to-km/{value}`           | Convierte Millas a Kilómetros |
 
 ## 🔄 CI/CD Pipeline
 
