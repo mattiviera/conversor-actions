@@ -265,5 +265,3 @@ pytest --cov=app --cov-report=term
 * Sin errores de lint (flake8)
 * Análisis estático automatizado con CodeQL
 * Tokens seguros y validados en Redis
-
-  PROBANDO revert
