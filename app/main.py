@@ -9,7 +9,7 @@ from app.conversor import (
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 import redis
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, text
 from app.database import engine, health_logs
 
 load_dotenv()
@@ -95,7 +95,7 @@ async def ping(request: Request):
 async def get_responses():
     """
     Devuelve todos los registros guardados en la base de datos
-    de los requests hechos al endpoint /ping
+    de los requests hechos al endpoint /ping.
     """
     stmt = select(health_logs)
     with engine.connect() as conn:
@@ -113,3 +113,21 @@ async def get_responses():
     ]
 
     return {"total": len(data), "records": data}
+
+
+@app.delete("/clear-responses", tags=["Health"])
+async def clear_responses():
+    """
+    Elimina todos los registros guardados en Redis y en la base de datos.
+    Devuelve un mensaje de confirmación.
+    """
+    # Limpiar Redis (todas las keys de tipo ping)
+    for key in redis_client.keys("ping:*"):
+        redis_client.delete(key)
+
+    # Limpiar base de datos
+    with engine.connect() as conn:
+        conn.execute(text("DELETE FROM health_logs"))
+        conn.commit()
+
+    return {"message": "All responses have been cleared successfully"}
