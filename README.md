@@ -1,276 +1,267 @@
 # Conversor de Unidades con FastAPI y CI/CD
 
-Un **conversor de unidades** moderno y eficiente para temperatura y distancia, desarrollado con **FastAPI** e implementando un pipeline completo de **Integración Continua** con **GitHub Actions** .
+Un conversor de unidades moderno y eficiente para temperatura y distancia, desarrollado con FastAPI, e implementando un pipeline completo de Integración Continua y Entrega Continua (CI/CD) con GitHub Actions y análisis de seguridad con CodeQL.
+
+---
 
 ## 🚀 Características
 
 ### Conversiones Disponibles
 
-- **Temperatura** : Celsius ↔ Fahrenheit
-- **Distancia** : Kilómetros ↔ Millas
+* Temperatura: Celsius ↔ Fahrenheit
+* Distancia: Kilómetros ↔ Millas
 
 ### API REST
 
-- Endpoints intuitivos para todas las conversiones
-- Respuestas en formato JSON
-- Validación automática de parámetros
-- Documentación interactiva automática
+* Endpoints intuitivos y documentados
+* Respuestas JSON
+* Validación automática de parámetros
+* Documentación interactiva (Swagger UI y ReDoc)
 
-### Endpoint de Salud
+---
 
-- **`/health`** : Monitoreo del estado del servicio
-- Retorna `{"status": "ok", "timestamp": "2025-01-01T12:00:00Z"}`
-- Incluye `"api_key_configurada": true` si la variable de entorno `MY_API_KEY` está configurada.
-- Permite que pipelines y herramientas de monitoreo verifiquen si el servicio está levantado y la API key está disponible.
-- Timestamp en formato ISO UTC
-- Ideal para pipelines y herramientas de monitoreo
+## 🩺 Endpoint de Salud
 
+**`/health`**
 
-## Endpoint de Monitoreo y Logs
+* Retorna `{"status": "ok", "timestamp": "2025-01-01T12:00:00Z"}`
+* Incluye `"api_key_configurada": true` si existe la variable `MY_API_KEY`
+* Ideal para monitoreo y validaciones automáticas en pipelines
 
-Este proyecto incluye un endpoint especial para monitoreo llamado `/ping`. Su propósito es registrar información relevante de los requests y permitir verificar que la aplicación está levantada correctamente.
+---
+
+## 🧩 Endpoints de Monitoreo y Auditoría
 
 ### `/ping`
 
-- **Método:** `GET`
-- **Ruta:** `/ping`
-- **Descripción:**Este endpoint guarda en **Redis** y en la **base de datos** información de quién realiza la petición, incluyendo la dirección IP del cliente, timestamp UTC y si la API Key está configurada.Esto permite auditar accesos y monitorear el estado del servicio.
-- **Respuesta ejemplo:**
+* **Método:** GET
+* **Descripción:** Guarda información de la petición (IP, timestamp, API key) en Redis y base de datos.
+* Permite auditar accesos y verificar el estado del servicio.
+* Requiere token válido.
 
-```json
-{
-  "status": "ok",
-  "timestamp": "2025-10-07T15:00:00Z",
-  "client_ip": "127.0.0.1"
-}
-```
+**Ejemplo de respuesta:**
 
+<pre class="overflow-visible!" data-start="1399" data-end="1498"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-json"><span><span>{</span><span>
+  </span><span>"status"</span><span>:</span><span></span><span>"ok"</span><span>,</span><span>
+  </span><span>"timestamp"</span><span>:</span><span></span><span>"2025-11-06T15:00:00Z"</span><span>,</span><span>
+  </span><span>"client_ip"</span><span>:</span><span></span><span>"127.0.0.1"</span><span>
+</span><span>}</span><span>
+</span></span></code></div></div></pre>
 
-### `[GET] /get-responses`
+---
 
-Devuelve todos los registros guardados por los requests realizados al endpoint `/ping`.
+### `/get-responses`
 
-**Respuesta ejemplo:**
+* **Método:** GET
+* **Descripción:** Devuelve todos los registros almacenados por las llamadas a `/ping`.
+* **Protegido:** requiere token válido (`Authorization: Bearer <token>`).
 
-<pre class="overflow-visible!" data-start="917" data-end="1230"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-json"><span><span>{</span><span>
+**Ejemplo:**
+
+<pre class="overflow-visible!" data-start="1726" data-end="1899"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-json"><span><span>{</span><span>
   </span><span>"total"</span><span>:</span><span></span><span>3</span><span>,</span><span>
   </span><span>"records"</span><span>:</span><span></span><span>[</span><span>
     </span><span>{</span><span>
-      </span><span>"timestamp"</span><span>:</span><span></span><span>"2025-10-07T17:01:00.123456+00:00"</span><span>,</span><span>
+      </span><span>"timestamp"</span><span>:</span><span></span><span>"2025-11-06T18:50:25.274221"</span><span>,</span><span>
       </span><span>"client_ip"</span><span>:</span><span></span><span>"127.0.0.1"</span><span>,</span><span>
-      </span><span>"api_key"</span><span>:</span><span></span><span>"my-secret-key"</span><span>
-    </span><span>}</span><span>,</span><span>
-    </span><span>{</span><span>
-      </span><span>"timestamp"</span><span>:</span><span></span><span>"2025-10-07T17:05:00.654321+00:00"</span><span>,</span><span>
-      </span><span>"client_ip"</span><span>:</span><span></span><span>"127.0.0.1"</span><span>,</span><span>
-      </span><span>"api_key"</span><span>:</span><span></span><span>"my-secret-key"</span><span>
+      </span><span>"api_key"</span><span>:</span><span></span><span>"123456abcdef"</span><span>
     </span><span>}</span><span>
   </span><span>]</span><span>
-</span><span>}</span></span></code></div></div></pre>
-
-
-### Pipeline CI/CD
-
-- ✅ **Linting** : Análisis de código con `flake8`
-- ✅ **Testing** : Tests unitarios con `pytest`
-- ✅ **Cobertura** : Reportes de cobertura de código (>90%)
-- ✅ **Build** : Construcción automática del paquete
-- ✅ **Artefactos** : Subida automática de builds
-
-
-## Uso con Docker
-
-1. Construir contenedores:
-
-<pre class="overflow-visible!" data-start="1645" data-end="1677"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose build
+</span><span>}</span><span>
 </span></span></code></div></div></pre>
 
-2. Levantar contenedores (FastAPI + Redis):
+---
 
-<pre class="overflow-visible!" data-start="1724" data-end="1753"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose up
+### `/clear-responses`
+
+**Objetivo:**
+
+Permite eliminar todos los registros almacenados en  **Redis o base de datos** .
+
+* **Método:** DELETE
+* **Ruta:** `/clear-responses`
+* **Protegido:** requiere token válido
+* **Respuesta ejemplo:**
+
+<pre class="overflow-visible!" data-start="2151" data-end="2226"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-json"><span><span>{</span><span>
+  </span><span>"message"</span><span>:</span><span></span><span>"All responses have been cleared successfully"</span><span>
+</span><span>}</span><span>
 </span></span></code></div></div></pre>
 
-3. Acceder a la API:
+---
 
-* Health: [http://localhost:8000/health](http://localhost:8000/health)
-* Ping: [http://localhost:8000/ping](http://localhost:8000/ping)
+## 🔑 Autenticación con Token
 
-4. Detener contenedores:
+* Endpoints `/ping`, `/get-responses` y `/clear-responses` requieren un  **token** .
+* Los tokens válidos se guardan en Redis como `token:<valor>`.
 
-<pre class="overflow-visible!" data-start="1942" data-end="1973"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose down</span></span></code></div></div></pre>
+**Ejemplo de uso:**
 
+<pre class="overflow-visible!" data-start="2434" data-end="2539"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>curl -X GET </span><span>"http://127.0.0.1:8000/get-responses"</span><span> \
+  -H </span><span>"Authorization: Bearer 123456abcdef"</span><span>
+</span></span></code></div></div></pre>
 
-## 📋 Requisitos Previos
+**Ejemplo para crear token manualmente (Windows con Docker Redis):**
 
-- Python 3.8+
-- pip
-- Git
+<pre class="overflow-visible!" data-start="2611" data-end="2684"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker </span><span>exec</span><span> -it redis redis-cli </span><span>set</span><span> token:123456abcdef </span><span>"true"</span><span>
+</span></span></code></div></div></pre>
 
-## 🛠️ Instalación
+**Generar tokens JWT de ejemplo:**
 
-### 1. Clonar el repositorio
+👉 [https://www.jwt.io/](https://www.jwt.io/)
 
-```bash
-git clone https://github.com/mattiviera/conversor-actions.git
-cd conversor-actions
-```
+---
 
-### 2. Crear entorno virtual
+## 🔍 Análisis de Seguridad con CodeQL
 
-```bash
-# Crear entorno virtual
-python -m venv venv
+Este proyecto utiliza CodeQL de GitHub para análisis estático automatizado de seguridad.
 
-# Activar entorno virtual
-# En Windows:
-venv\Scripts\activate
+**Objetivo:**
 
-# En macOS/Linux:
-source venv/bin/activate
-```
+Detectar vulnerabilidades, malas prácticas y asegurar cumplimiento de estándares.
 
-### 3. Instalar dependencias
+### Workflow CodeQL
 
-```bash
-pip install -r requirements.txt
-```
+Archivo: `.github/workflows/codeql.yml`
 
-## 🚦 Uso
+<pre class="overflow-visible!" data-start="3066" data-end="3816"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-yaml"><span><span>name:</span><span></span><span>"CodeQL"</span><span>
 
-### Levantar el servidor
+</span><span>on:</span><span>
+  </span><span>push:</span><span>
+    </span><span>branches:</span><span> [ </span><span>main</span><span> ]
+  </span><span>pull_request:</span><span>
+    </span><span>branches:</span><span> [ </span><span>main</span><span> ]
+  </span><span>schedule:</span><span>
+    </span><span>-</span><span></span><span>cron:</span><span></span><span>'0 3 * * 1'</span><span>
 
-```bash
-uvicorn app.main:app --reload
-```
+</span><span>jobs:</span><span>
+  </span><span>analyze:</span><span>
+    </span><span>name:</span><span></span><span>CodeQL</span><span></span><span>Analysis</span><span>
+    </span><span>runs-on:</span><span></span><span>ubuntu-latest</span><span>
+    </span><span>permissions:</span><span>
+      </span><span>actions:</span><span></span><span>read</span><span>
+      </span><span>contents:</span><span></span><span>read</span><span>
+      </span><span>security-events:</span><span></span><span>write</span><span>
 
-El servidor estará disponible en: `http://127.0.0.1:8000`
+    </span><span>strategy:</span><span>
+      </span><span>fail-fast:</span><span></span><span>false</span><span>
+      </span><span>matrix:</span><span>
+        </span><span>language:</span><span> [ </span><span>'python'</span><span> ]
 
-### Ejemplos de uso
+    </span><span>steps:</span><span>
+      </span><span>-</span><span></span><span>name:</span><span></span><span>Checkout</span><span></span><span>repository</span><span>
+        </span><span>uses:</span><span></span><span>actions/checkout@v4</span><span>
 
-#### Conversión de temperatura
+      </span><span>-</span><span></span><span>name:</span><span></span><span>Initialize</span><span></span><span>CodeQL</span><span>
+        </span><span>uses:</span><span></span><span>github/codeql-action/init@v3</span><span>
+        </span><span>with:</span><span>
+          </span><span>languages:</span><span></span><span>${{</span><span></span><span>matrix.language</span><span></span><span>}}</span><span>
 
-```bash
-# Celsius a Fahrenheit
-curl http://127.0.0.1:8000/celsius-to-fahrenheit/25
-# Respuesta: {"celsius": 25, "fahrenheit": 77.0}
+      </span><span>-</span><span></span><span>name:</span><span></span><span>Autobuild</span><span>
+        </span><span>uses:</span><span></span><span>github/codeql-action/autobuild@v3</span><span>
 
-# Fahrenheit a Celsius
-curl http://127.0.0.1:8000/fahrenheit-to-celsius/77
-# Respuesta: {"fahrenheit": 77, "celsius": 25.0}
-```
+      </span><span>-</span><span></span><span>name:</span><span></span><span>Perform</span><span></span><span>CodeQL</span><span></span><span>Analysis</span><span>
+        </span><span>uses:</span><span></span><span>github/codeql-action/analyze@v3</span><span>
+</span></span></code></div></div></pre>
 
-#### Conversión de distancia
-
-```bash
-# Kilómetros a Millas
-curl http://127.0.0.1:8000/km-to-miles/10
-# Respuesta: {"kilometers": 10, "miles": 6.214}
-
-# Millas a Kilómetros
-curl http://127.0.0.1:8000/miles-to-km/6.214
-# Respuesta: {"miles": 6.214, "kilometers": 10.0}
-```
-
-#### Verificar salud del servicio
-
-```bash
-curl http://127.0.0.1:8000/health
-# Respuesta: {"status": "ok", "timestamp": "2025-09-25T10:30:45.123Z"}
-```
+---
 
 ## 🧪 Testing
 
 ### Ejecutar tests
 
-```bash
-# Tests básicos
-pytest
-
-# Tests con cobertura
+<pre class="overflow-visible!" data-start="3858" data-end="3911"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>pytest
 pytest --cov=app --cov-report=term
+</span></span></code></div></div></pre>
 
-# Tests con reporte HTML
-pytest --cov=app --cov-report=html
-```
+### Cobertura
 
-### Cobertura de Tests
+* Cobertura mínima requerida: 90%
+* Tests incluidos:
+  * Conversión de temperatura y distancia
+  * `/health`
+  * `/ping` (con token)
+  * `/get-responses` (con token)
+  * `/clear-responses` (con token)
 
-- **Objetivo** : Cobertura mínima del 90%
-- **Actual** : 100% de cobertura
-- **Incluye** : Tests unitarios para todos los endpoints y funciones de conversión
+---
 
-#### Tests del endpoint `/health`
+## 🐳 Uso con Docker
 
-- ✅ Verifica status code 200
-- ✅ Valida estructura JSON de respuesta
-- ✅ Confirma formato ISO del timestamp
-- ✅ Comprueba valor correcto del status
+### Construir contenedores
 
-## 📚 Documentación
+<pre class="overflow-visible!" data-start="4187" data-end="4219"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose build
+</span></span></code></div></div></pre>
 
-### Documentación Interactiva
+### Levantar servicios
 
-Una vez levantado el servidor, accede a la documentación automática:
+<pre class="overflow-visible!" data-start="4245" data-end="4274"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose up
+</span></span></code></div></div></pre>
 
-- **Swagger UI** : `http://127.0.0.1:8000/docs`
-- **ReDoc** : `http://127.0.0.1:8000/redoc`
+### Acceder a la API
 
-### Endpoints Disponibles
+* Health → [http://localhost:8000/health](http://localhost:8000/health)
+* Ping → [http://localhost:8000/ping](http://localhost:8000/ping)
 
-| Método | Endpoint                           | Descripción                   |
-| ------- | ---------------------------------- | ------------------------------ |
-| GET     | `/health`                        | Estado del servicio            |
-| GET     | `/celsius-to-fahrenheit/{value}` | Convierte Celsius a Fahrenheit |
-| GET     | `/fahrenheit-to-celsius/{value}` | Convierte Fahrenheit a Celsius |
-| GET     | `/km-to-miles/{value}`           | Convierte Kilómetros a Millas |
-| GET     | `/miles-to-km/{value}`           | Convierte Millas a Kilómetros |
+### Detener
 
-## 🔄 CI/CD Pipeline
+<pre class="overflow-visible!" data-start="4452" data-end="4483"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-bash"><span><span>docker-compose down
+</span></span></code></div></div></pre>
 
-### Workflow de GitHub Actions
+---
 
-El pipeline se ejecuta automáticamente en cada push y pull request:
+## ⚙️ CI/CD Pipeline
 
-1. **Setup** : Configuración del entorno Python
-2. **Dependencies** : Instalación de dependencias
-3. **Lint** : Análisis de código con flake8
-4. **Test** : Ejecución de tests unitarios
-5. **Coverage** : Verificación de cobertura mínima
-6. **Build** : Construcción del paquete distribuible
-7. **Artifacts** : Subida de artefactos del build
+### Workflow principal (`.github/workflows/ci.yml`)
 
-### Badges de Estado
+* Setup Python
+* Instala dependencias
+* Linting con flake8
+* Testing con pytest
+* Cobertura mínima 90%
+* Build y artifacts
+* Análisis CodeQL
 
-```markdown
-![CI](https://github.com/usuario/conversor-actions/workflows/CI/badge.svg)
-![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
-![Python](https://img.shields.io/badge/python-3.8+-blue)
-```
+### Badges
+
+<pre class="overflow-visible!" data-start="4733" data-end="5033"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre! language-markdown"><span><span>![</span><span>CI</span><span>](</span><span>https://github.com/usuario/conversor-actions/workflows/CI/badge.svg</span><span>)
+![</span><span>CodeQL</span><span>](</span><span>https://github.com/usuario/conversor-actions/workflows/CodeQL/badge.svg</span><span>)
+![</span><span>Coverage</span><span>](</span><span>https://img.shields.io/badge/coverage-100%25-brightgreen</span><span>)
+![</span><span>Python</span><span>](</span><span>https://img.shields.io/badge/python-3.8+-blue</span><span>)
+</span></span></code></div></div></pre>
+
+---
 
 ## 🏗️ Estructura del Proyecto
 
-```
-conversor-actions/
+<pre class="overflow-visible!" data-start="5072" data-end="5583"><div class="contain-inline-size rounded-2xl relative bg-token-sidebar-surface-primary"><div class="sticky top-9"><div class="absolute end-0 bottom-0 flex h-9 items-center pe-2"><div class="bg-token-bg-elevated-secondary text-token-text-secondary flex items-center gap-4 rounded-sm px-2 font-sans text-xs"></div></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="whitespace-pre!"><span><span>conversor-actions/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py          # Aplicación FastAPI principal
-│   └── conversor.py    # Lógica de conversiones
+│   ├── main.py              </span><span># FastAPI principal</span><span>
+│   ├── conversor.py         </span><span># Lógica de conversiones</span><span>
+│   └── database.py          </span><span># Conexión Redis y base de datos</span><span>
 ├── tests/
-│   ├── __init__.py
-│   ├── test_api.py     # Tests de endpoints
-│   ├── test_conversor.py # Tests de conversiones
-│   └── test_health.py # Tests de status
+│   ├── test_api.py
+│   ├── test_conversor.py
+│   ├── test_health.py
+│   ├── test_ping.py
+│   ├── test_get_responses.py
+│   └── test_clear_responses.py
 ├── .github/
 │   └── workflows/
-│       └── ci.yml       # Configuración CI/CD
-├── requirements.txt     # Dependencias del proyecto
-├── pyproject.toml            # Configuración del paquete
-└── README.md           # Este archivo
-```
+│       ├── ci.yml
+│       └── codeql.yml
+├── requirements.txt
+├── pyproject.toml
+└── README.md
+</span></span></code></div></div></pre>
 
-### Estándares de Código
+---
 
-- Seguir PEP 8
-- Cobertura de tests mínima: 90%
-- Todos los tests deben pasar
-- Lint sin errores
+## 💡 Estándares de Código
+
+* Cumple PEP 8
+* Cobertura de tests ≥ 90%
+* Sin errores de lint (flake8)
+* Análisis estático automatizado con CodeQL
+* Tokens seguros y validados en Redis
