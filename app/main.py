@@ -1,6 +1,5 @@
 import os
 from fastapi import FastAPI, Request, HTTPException, Depends
-from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.conversor import (
     celsius_a_fahrenheit,
